@@ -170,7 +170,7 @@ class COCODataset(Dataset):
             else "{:012}".format(id_) + ".jpg"
         )
 
-        return (res, img_info, resized_info, file_name)
+        return (res, img_info, resized_info, file_name) #(gt_boxes, origin img hw, resize img hw, filename) 
 
     def load_anno(self, index):
         return self.annotations[index][0]
@@ -198,14 +198,14 @@ class COCODataset(Dataset):
     def pull_item(self, index):
         id_ = self.ids[index]
 
-        res, img_info, resized_info, _ = self.annotations[index]
+        res, img_info, resized_info, _ = self.annotations[index] #(gt_boxes, origin img hw, resize img hw, filename)
         if self.imgs is not None:
             pad_img = self.imgs[index]
             img = pad_img[: resized_info[0], : resized_info[1], :].copy()
         else:
-            img = self.load_resized_img(index)
+            img = self.load_resized_img(index) #load and resize img, keep ratio
 
-        return img, res.copy(), img_info, np.array([id_])
+        return img, res.copy(), img_info, np.array([id_]) # resized_img, resized_bbox, origin_img_hw, id
 
     @Dataset.mosaic_getitem
     def __getitem__(self, index):

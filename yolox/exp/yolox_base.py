@@ -33,7 +33,7 @@ class Exp(BaseExp):
         self.input_size = (640, 640)  # (height, width)
         # Actual multiscale ranges: [640 - 5 * 32, 640 + 5 * 32].
         # To disable multiscale training, set the value to 0.
-        self.multiscale_range = 5
+        self.multiscale_range = 0
         # You can uncomment this line to specify a multiscale range
         # self.random_size = (14, 26)
         # dir of dataset images, if data_dir is None, this project will use `datasets` dir
@@ -47,9 +47,9 @@ class Exp(BaseExp):
 
         # --------------- transform config ----------------- #
         # prob of applying mosaic aug
-        self.mosaic_prob = 1.0
+        self.mosaic_prob = 0.0
         # prob of applying mixup aug
-        self.mixup_prob = 1.0
+        self.mixup_prob = 0.0
         # prob of applying hsv aug
         self.hsv_prob = 1.0
         # prob of applying flip aug
@@ -60,14 +60,14 @@ class Exp(BaseExp):
         self.translate = 0.1
         self.mosaic_scale = (0.1, 2)
         # apply mixup aug or not
-        self.enable_mixup = True
+        self.enable_mixup = False
         self.mixup_scale = (0.5, 1.5)
         # shear angle range, for example, if set to 2, the true range is (-2, 2)
         self.shear = 2.0
 
         # --------------  training config --------------------- #
         # epoch number used for warmup
-        self.warmup_epochs = 5
+        self.warmup_epochs = 1
         # max training epoch
         self.max_epoch = 300
         # minimum learning rate during warmup
@@ -88,7 +88,7 @@ class Exp(BaseExp):
         self.momentum = 0.9
         # log period in iter, for example,
         # if set to 1, user could see log every iteration.
-        self.print_interval = 10
+        self.print_interval = 100
         # eval period in epoch, for example,
         # if set to 1, model will be evaluate after every epoch.
         self.eval_interval = 10
@@ -105,7 +105,7 @@ class Exp(BaseExp):
         # boxes whose scores are less than test_conf will be filtered
         self.test_conf = 0.01
         # nms threshold
-        self.nmsthre = 0.65
+        self.nmsthre = 0.5
 
     def get_model(self):
         from yolox.models import YOLOX, YOLOPAFPN, YOLOXHead

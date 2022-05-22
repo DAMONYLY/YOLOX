@@ -155,8 +155,8 @@ class MosaicDetection(Dataset):
 
         else:
             self._dataset._input_dim = self.input_dim
-            img, label, img_info, img_id = self._dataset.pull_item(idx)
-            img, label = self.preproc(img, label, self.input_dim)
+            img, label, img_info, img_id = self._dataset.pull_item(idx) #resized_img, resized_bbox, origin_img_hw, id
+            img, label = self.preproc(img, label, self.input_dim) # resize到指定尺寸的图片，对应的label[N, 5], 5:(cls, cx,cy,w,h)
             return img, label, img_info, img_id
 
     def mixup(self, origin_img, origin_labels, input_dim):

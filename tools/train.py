@@ -30,14 +30,14 @@ def make_parser():
         type=str,
         help="url used to set up distributed training",
     )
-    parser.add_argument("-b", "--batch-size", type=int, default=64, help="batch size")
+    parser.add_argument("-b", "--batch-size", type=int, default=20, help="batch size")
     parser.add_argument(
-        "-d", "--devices", default=None, type=int, help="device for training"
+        "-d", "--devices", default=1, type=int, help="device for training"
     )
     parser.add_argument(
         "-f",
         "--exp_file",
-        default=None,
+        default='exps/example/custom/yolox_s.py',
         type=str,
         help="plz input your experiment description file",
     )
@@ -61,8 +61,8 @@ def make_parser():
     parser.add_argument(
         "--fp16",
         dest="fp16",
-        default=False,
-        action="store_true",
+        default=True,
+        # action="store_true",
         help="Adopting mix precision training.",
     )
     parser.add_argument(
@@ -76,8 +76,8 @@ def make_parser():
         "-o",
         "--occupy",
         dest="occupy",
-        default=False,
-        action="store_true",
+        default=True,
+        # action="store_true",
         help="occupy GPU memory first for training.",
     )
     parser.add_argument(
@@ -118,6 +118,9 @@ def main(exp: Exp, args):
 
 
 if __name__ == "__main__":
+    import sys
+    # sys.argv = ['-m', 'yolox.tools.train', '-f', 'exps/example/custom/yolox_s.py', '-d', '1', '-b', 
+                # '8', '--fp16', '-o']
     configure_module()
     args = make_parser().parse_args()
     exp = get_exp(args.exp_file, args.name)

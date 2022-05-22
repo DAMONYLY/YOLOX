@@ -144,7 +144,7 @@ def preproc(img, input_size, swap=(2, 0, 1)):
         padded_img = np.ones((input_size[0], input_size[1], 3), dtype=np.uint8) * 114
     else:
         padded_img = np.ones(input_size, dtype=np.uint8) * 114
-
+    # 将原图片尺寸转成预设的输入图片尺寸
     r = min(input_size[0] / img.shape[0], input_size[1] / img.shape[1])
     resized_img = cv2.resize(
         img,
@@ -154,7 +154,7 @@ def preproc(img, input_size, swap=(2, 0, 1)):
     padded_img[: int(img.shape[0] * r), : int(img.shape[1] * r)] = resized_img
 
     padded_img = padded_img.transpose(swap)
-    padded_img = np.ascontiguousarray(padded_img, dtype=np.float32)
+    padded_img = np.ascontiguousarray(padded_img, dtype=np.float32) # 返回连续的数组在内存中，same as contiguous()
     return padded_img, r
 
 
@@ -182,13 +182,13 @@ class TrainTransform:
 
         if random.random() < self.hsv_prob:
             augment_hsv(image)
-        image_t, boxes = _mirror(image, boxes, self.flip_prob)
+        image_t, boxes = _mirror(image, boxes, self.flip_prob) # 翻转图片
         height, width, _ = image_t.shape
-        image_t, r_ = preproc(image_t, input_dim)
-        # boxes [xyxy] 2 [cx,cy,w,h]
+        image_t, r_ = preproc(image_t, input_dim) # resize图片到指定输入尺寸图片
+        # boxes [xyxy] 2 [cx,cy,w,h]， 方便对应bbox位置resize
         boxes = xyxy2cxcywh(boxes)
         boxes *= r_
-
+        # 去除无宽或无高的无效bbox
         mask_b = np.minimum(boxes[:, 2], boxes[:, 3]) > 1
         boxes_t = boxes[mask_b]
         labels_t = labels[mask_b]
@@ -199,9 +199,9 @@ class TrainTransform:
             boxes_t = boxes_o
             labels_t = labels_o
 
-        labels_t = np.expand_dims(labels_t, 1)
-
-        targets_t = np.hstack((labels_t, boxes_t))
+        labels_t = np.expand_dims(labels_t, 1) # reshape to [N, 1]
+        # 将bbox统一尺寸为[max_labels, 5], 5:(cls, cx, cy, w, h)
+        targets_t = np.hstack((labels_t, boxes_t)) # 按列拼接, [N, 1] and [N, 4] --> [N,5]
         padded_labels = np.zeros((self.max_labels, 5))
         padded_labels[range(len(targets_t))[: self.max_labels]] = targets_t[
             : self.max_labels
